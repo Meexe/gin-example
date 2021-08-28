@@ -1,4 +1,4 @@
-package server
+package hack
 
 import (
 	"net/http"
@@ -7,6 +7,6 @@ import (
 )
 
 // Ping test
-func (s *Server) Ping(c *gin.Context) {
+func (s *Service) Ping(c *gin.Context) {
 	c.String(http.StatusOK, "pong")
 }

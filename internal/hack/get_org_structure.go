@@ -1,4 +1,4 @@
-package server
+package hack
 
 import (
 	"net/http"
@@ -6,14 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type Department struct {
-	ID             int32         `json:"id"`
-	Name           string        `json:"name"`
-	SubDepartments []*Department `json:"departments"`
-}
-
-// GetOrgStructure returns OrgStructure
-func (s *Server) GetOrgStructure(c *gin.Context) {
+// GetOrgStructure возвращает орг структуру муниципалитета
+func (s *Service) GetOrgStructure(c *gin.Context) {
 	deps, err := s.getOrgStructure()
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
@@ -22,7 +16,7 @@ func (s *Server) GetOrgStructure(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"departments": deps})
 }
 
-func (s *Server) getOrgStructure() (deps []*Department, err error) {
+func (s *Service) getOrgStructure() (deps []*Department, err error) {
 	const query = `
 		select
 			id,

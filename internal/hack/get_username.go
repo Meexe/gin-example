@@ -1,4 +1,4 @@
-package server
+package hack
 
 import (
 	"net/http"
@@ -7,7 +7,7 @@ import (
 )
 
 // GetUserName returns username
-func (s *Server) GetUsername(c *gin.Context) {
+func (s *Service) GetUsername(c *gin.Context) {
 	user := c.Params.ByName("name")
 	c.JSON(http.StatusOK, gin.H{"user": user})
 }
