@@ -1,7 +1,8 @@
 package server
 
 import (
-	"github.com/Meexe/gin-example/internal/server/middleware"
+	"database/sql"
+
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -24,21 +25,26 @@ import (
 // @host petstore.swagger.io
 // @BasePath /v2
 
-var db = make(map[string]string)
+type Server struct {
+	engine *gin.Engine
+	db     *sql.DB
+}
 
-func New() *gin.Engine {
+func New(dbAdp *sql.DB) *Server {
 	a := gin.Default()
 
-	public := a.Group("/")
-	authorized := a.Group("admin", middleware.Auth)
+	return &Server{
+		engine: a,
+		db:     dbAdp,
+	}
+}
 
+func (s *Server) Run(host string) {
 	// url := ginSwagger.URL("http://localhost:8080/swagger/doc.json")
 
-	public.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	public.GET("ping", Ping)
-	public.GET("user/:name", GetUsername)
-
-	authorized.POST("me", IsAdmin)
-
-	return a
+	s.engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	s.engine.GET("/ping", s.Ping)
+	s.engine.GET("/user/:name", s.GetUsername)
+	s.engine.GET("/org-structure", s.GetOrgStructure)
+	s.engine.Run(host)
 }

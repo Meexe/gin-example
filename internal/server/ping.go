@@ -7,6 +7,6 @@ import (
 )
 
 // Ping test
-func Ping(c *gin.Context) {
+func (s *Server) Ping(c *gin.Context) {
 	c.String(http.StatusOK, "pong")
 }
