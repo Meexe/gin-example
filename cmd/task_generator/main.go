@@ -18,7 +18,19 @@ func main() {
 		log.Fatal(err)
 	}
 
-	deps, err := getDepartments(db)
+	// deps, err := getDepartments(db)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+
+	// for _, dep := range deps {
+	// 	err = genTask(db, dep)
+	// 	if err != nil {
+	// 		log.Fatal(err)
+	// 	}
+	// }
+
+	deps, err := getAllDepartments(db)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -62,6 +74,31 @@ func getDepartments(db *sql.DB) (deps []*hack.Department, err error) {
 	return
 }
 
+func getAllDepartments(db *sql.DB) (deps []*hack.Department, err error) {
+	const query = `
+		select
+			id,
+			department
+		from departments
+		order by id;
+	`
+
+	rows, err := db.Query(query)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var dep hack.Department
+		if err = rows.Scan(&dep.ID, &dep.Name); err != nil {
+			return
+		}
+		deps = append(deps, &dep)
+	}
+	return
+}
+
 func genTask(db *sql.DB, dep *hack.Department) (err error) {
 	const query = `
 		insert into tasks(text, contacts, department_id)
@@ -81,24 +118,25 @@ func genTask(db *sql.DB, dep *hack.Department) (err error) {
 	}()
 
 	reader := bufio.NewReader(os.Stdin)
-	for i := 0; i < 2; i++ {
-		fmt.Println(dep.Name)
+	// for i := 0; i < 2; i++ {
+	fmt.Println(dep.Name)
 
-		fmt.Print("Text-> ")
-		text, _ := reader.ReadString('\n')
-		text = strings.Replace(text, "\n", "", -1)
-		if text == "skip" {
-			continue
-		}
-
-		fmt.Print("Contacts-> ")
-		contacts, _ := reader.ReadString('\n')
-		contacts = strings.Replace(contacts, "\n", "", -1)
-
-		_, err = tx.Exec(query, text, contacts, dep.ID)
-		if err != nil {
-			return
-		}
+	fmt.Print("Text-> ")
+	text, _ := reader.ReadString('\n')
+	text = strings.Replace(text, "\n", "", -1)
+	if text == "skip" {
+		// continue
+		return
 	}
+
+	fmt.Print("Contacts-> ")
+	contacts, _ := reader.ReadString('\n')
+	contacts = strings.Replace(contacts, "\n", "", -1)
+
+	_, err = tx.Exec(query, text, contacts, dep.ID)
+	if err != nil {
+		return
+	}
+	// }
 	return
 }
