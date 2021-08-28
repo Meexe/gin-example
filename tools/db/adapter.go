@@ -1,4 +1,4 @@
-package tools
+package db
 
 import (
 	"database/sql"
@@ -8,6 +8,6 @@ import (
 
 const connStr = "user=maxpak dbname=hack sslmode=disable"
 
-func InitDB() (*sql.DB, error) {
+func New() (*sql.DB, error) {
 	return sql.Open("postgres", connStr)
 }

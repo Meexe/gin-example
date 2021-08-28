@@ -14,7 +14,6 @@ type Service struct {
 }
 
 func New(dbAdp *sql.DB) *Service {
-
 	return &Service{
 		db: dbAdp,
 	}

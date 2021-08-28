@@ -24,7 +24,7 @@ func main() {
 	// }
 
 	// for _, dep := range deps {
-	// 	err = genTask(db, dep)
+	// 	err = genWorker(db, dep, 3, false) // тут генерируем обычных рабочих
 	// 	if err != nil {
 	// 		log.Fatal(err)
 	// 	}
@@ -35,8 +35,9 @@ func main() {
 		log.Fatal(err)
 	}
 
+	var phone = 89031787600
 	for _, dep := range deps {
-		err = genTask(db, dep)
+		err = genWorker(db, dep, phone) // тут генерируем начальников
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -99,10 +100,17 @@ func getAllDepartments(db *sql.DB) (deps []*hack.Object, err error) {
 	return
 }
 
-func genTask(db *sql.DB, dep *hack.Object) (err error) {
+func genWorker(db *sql.DB, dep *hack.Object, phone int) (err error) {
 	const query = `
-		insert into tasks(text, contacts, department_id)
-		values ($1, $2, $3);
+		insert into workers(
+			department_id,
+			name,
+			phone,
+			email,
+			is_supervisor,
+			position
+		)
+		values ($1, $2, $3, $4, $5, $6);
 	`
 
 	tx, err := db.Begin()
@@ -118,22 +126,22 @@ func genTask(db *sql.DB, dep *hack.Object) (err error) {
 	}()
 
 	reader := bufio.NewReader(os.Stdin)
-	// for i := 0; i < 2; i++ {
+	// for i := 0; i < count; i++ {
 	fmt.Println(dep.Name)
 
-	fmt.Print("Text-> ")
-	text, _ := reader.ReadString('\n')
-	text = strings.Replace(text, "\n", "", -1)
-	if text == "skip" {
+	fmt.Print("Name-> ")
+	name, _ := reader.ReadString('\n')
+	name = strings.Replace(name, "\n", "", -1)
+	if name == "skip" {
 		// continue
 		return
 	}
 
-	fmt.Print("Contacts-> ")
-	contacts, _ := reader.ReadString('\n')
-	contacts = strings.Replace(contacts, "\n", "", -1)
+	fmt.Print("Email-> ")
+	email, _ := reader.ReadString('\n')
+	email = strings.Replace(email, "\n", "", -1)
 
-	_, err = tx.Exec(query, text, contacts, dep.ID)
+	_, err = tx.Exec(query, dep.ID, name, phone, email, true, "Руководитель")
 	if err != nil {
 		return
 	}
