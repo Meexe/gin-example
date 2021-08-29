@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 
 	"github.com/Meexe/gin-example/internal/hack"
 	"github.com/Meexe/gin-example/tools/db"
@@ -12,6 +13,11 @@ import (
 )
 
 func main() {
+	port := os.Getenv("PORT")
+	if port == "" {
+		log.Fatal("$PORT must be set")
+	}
+
 	dbAdp, err := db.New()
 	if err != nil {
 		log.Fatal(err)
@@ -19,14 +25,14 @@ func main() {
 	srv := hack.New(dbAdp)
 
 	server := initServer(srv)
-	server.Run(":8000")
+	server.Run(":" + port)
 }
 
 func initServer(s *hack.Service) *gin.Engine {
 	a := gin.Default()
 
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://localhost:8080"}
+	config.AllowOrigins = []string{"http://localhost:8080", "http://localhost:5000", "http://5ecb-62-217-191-250.ngrok.io"}
 	a.Use(cors.New(config))
 
 	a.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
