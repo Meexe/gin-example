@@ -2,7 +2,7 @@ package hack
 
 // Object - объект
 type Object struct {
-	ID          int32     `json:"id"`
+	ID          int32     `json:"ID"`
 	Name        string    `json:"name"`
 	Description string    `json:"desc"`
 	Load        int32     `json:"load"`
@@ -11,7 +11,7 @@ type Object struct {
 
 // Department - отдел/департамент муниципалитета
 type Department struct {
-	ID         int32     `json:"id"`
+	ID         int32     `json:"ID"`
 	Name       string    `json:"name"`
 	Load       int32     `json:"load"`
 	Supervisor *Worker   `json:"supervisor"`
@@ -20,7 +20,7 @@ type Department struct {
 
 // Worker - сотрудник
 type Worker struct {
-	ID       int32   `json:"id"`
+	ID       int32   `json:"ID"`
 	Name     string  `json:"name"`
 	Position string  `json:"position"`
 	Phone    string  `json:"phone"`
@@ -31,6 +31,21 @@ type Worker struct {
 
 // Task - заявка/задача
 type Task struct {
-	ID   int32  `json:"id"`
-	Name string `json:"name"`
+	ID         int32  `json:"ID"`
+	Text       string `json:"text"`
+	Status     string `json:"status"`
+	IsRegular  bool   `json:"isRegular"`
+	Deadline   string `json:"deadline"`
+	Priority   string `json:"priority"`
+	Complexity int32  `json:"complexity"`
+}
+
+type SaveTaskRequest struct {
+	Text         string `json:"text"`
+	Contacts     string `json:"contacts"`
+	DepartmentID int32  `json:"departmentID"`
+	IsRegular    bool   `json:"isRegular"`
+	Deadline     string `json:"deadline"`
+	Priority     string `json:"priority"`
+	Complexity   int32  `json:"complexity"`
 }
